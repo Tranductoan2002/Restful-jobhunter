@@ -1,5 +1,9 @@
 package vn.hoidanit.jobhunter.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.User;
@@ -19,5 +23,28 @@ public class UserService {
 
     public void handleDeleteUser(Long id) {
         this.userRepository.deleteById(id);
+    }
+
+    public User fetchUserById(Long id) {
+        Optional<User> userOptional = this.userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        }
+        return null;
+    }
+
+    public List<User> fetchAllUsers() {
+        return this.userRepository.findAll();
+    }
+
+    public User handleUpdateUser(User requser) {
+        User currentUser = this.fetchUserById(requser.getId());
+        if (currentUser != null) {
+            currentUser.setEmail(requser.getEmail());
+            currentUser.setName(requser.getName());
+            currentUser.setPassword(requser.getPassword());
+            currentUser = this.userRepository.save(currentUser);
+        }
+        return currentUser;
     }
 }
